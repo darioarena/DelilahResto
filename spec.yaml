@@ -1,0 +1,513 @@
+openapi: 3.0.0
+info:
+  title: Delilah Resto
+  version: "1.0.0"   
+  description: Documentacion para uso de API Delilah Resto
+  contact:
+    email: darioarenacba@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Usuarios
+    description: Informacion de usuarios
+  - name: Productos
+    description: Informacion de productos
+  - name: Pedidos
+    description: Informacion de pedidos
+paths:
+  /usuarios:
+    post:
+      tags: 
+        - Usuarios
+      summary: Añadir un nuevo usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: lalo_landa
+                fullname:
+                  type: string
+                  example: Lalo Landa
+                email:
+                  type: string
+                  example: lalolanda@gmail.com
+                phone:
+                  type: integer
+                  example: 03514123456
+                address:
+                  type: string
+                  example: Av. 9 de julio 367
+                pass:
+                  type: string
+                  example: LaloLanda123
+              required:
+                - username
+                - fullname
+                - email
+                - phone
+                - address
+                - pass
+      responses:
+        "200":
+          description: Usuario creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Usuario creado exitosamente
+                  user_id:
+                    type: integer
+                    example: 12345
+        "400":
+          description: Todos los campos deben estar completos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Todos los campos deben estar completos
+        "401":
+          description: Error al crear usuario
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Error al crear usuario
+        "500":
+          description: Internal Server Error
+  /usuarios/login:
+    post:
+      tags: 
+        - Usuarios
+      summary: Logueo de usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: lalo_landa
+                email:
+                  type: string
+                  example: lalolanda@gmail.com
+                pass:
+                  type: string
+                  example: LaloLanda123
+              required:
+                - pass
+      responses:
+        "200":
+          description: Usuario logueado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Usuario logueado exitosamente
+        "401":
+          description: Nombre de usuario/email o contraseña incorrectos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Nombre de usuario/email o contraseña incorrectos
+        "500":
+          description: Internal Server Error
+  /usuarios/{user_id}:
+    parameters: 
+    - in: path  
+      name: user_id
+      description: Id del usuario a manupilar
+      required: true
+      schema:
+        type: integer
+        example: 1756
+    get:
+      tags: 
+        - Usuarios
+      security: 
+        - bearerAuth: 
+          - read
+      summary: Listar un usuario
+      responses:
+        "200":
+          description: Listado de usuarios
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: lalo_landa
+                  fullname:
+                    type: string
+                    example: Lalo Landa
+                  email:
+                    type: string
+                    example: lalolanda@gmail.com
+                  phone:
+                    type: integer
+                    example: 03514123456
+                  address:
+                    type: string
+                    example: Av. 9 de julio 367
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+  /productos:
+    post:
+      tags: 
+        - Productos
+      security: 
+        - bearerAuth: 
+          - read
+      summary: Añadir un nuevo producto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Hamburguesa
+                price:
+                  type: number
+                  example: 456.30
+                img_url:
+                  type: string
+                  example: "https://saboryestilo.com.mx/wp-content/uploads/2019/07/como-preparar-carne-para-hamburguesa-1-800x400.jpg"
+              required:
+                - name
+                - price
+                - img_url
+      responses:
+        "200":
+          description: Producto creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Producto creado exitosamente
+                  product_id:
+                    type: integer
+                    example: 12345
+        "401":
+          description: Datos incompletos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Datos incompletos
+        "500":
+          description: Internal Server Error
+    get:
+      tags: 
+        - Productos
+      security: 
+        - bearerAuth: 
+          - read
+      summary: Listar todos los productos
+      responses:
+        "200":
+          description: Producto importados exitosamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    product_id:
+                      type: integer
+                      example: 12345
+                    name:
+                      type: string
+                      example: Hamburguesa
+                    price:
+                      type: number
+                      example: 456.30
+                    img_url:
+                      type: string
+                      example: "https://saboryestilo.com.mx/wp-content/uploads/2019/07/como-preparar-carne-para-hamburguesa-1-800x400.jpg"
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+  /productos/{product_id}:
+    parameters: 
+    - in: path  
+      name: product_id
+      description: Id del producto a manupilar
+      required: true
+      schema:
+        type: integer
+        example: 12345
+    patch:
+      tags: 
+        - Productos
+      security: 
+        - bearerAuth: 
+          - read
+      description: Modificar un producto
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: hamburguesa
+                price:
+                  type: number
+                  example: 456.30
+                img_url:
+                  type: string
+                  example: "https://saboryestilo.com.mx/wp-content/uploads/2019/07/como-preparar-carne-para-hamburguesa-1-800x400.jpg"
+      responses:
+        "200":
+          description: Producto modificado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Producto modificado exitosamente
+        "400":
+          description: Bad request
+        "500":
+          description: Internal Server Error
+    delete:
+      tags: 
+        - Productos
+      security: 
+        - bearerAuth: 
+          - read
+      description: Desactivado un producto
+      responses:
+        "200":
+          description: Producto desactivado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Producto desactivado exitosamente
+        "400":
+          description: Bad request
+        "500":
+          description: Internal Server Error
+  /pedidos:
+    post:
+      tags: 
+        - Pedidos
+      security: 
+        - bearerAuth: 
+          - read
+      summary: Añadir un nuevo pedido
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                total:
+                  type: number
+                  example: 456.30
+                pay_method_id:
+                  type: string
+                  example: efectivo
+                detail:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      product_id:
+                        type: integer
+                        example: 120
+                      quantity:
+                        type: integer
+                        example: 3
+              required:
+                - total
+                - payment_method
+                - product_id
+                - quantity
+      responses:
+        "200":
+          description: Pedido creado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Pedido creado exitosamente
+                  order_id:
+                    type: integer
+                    example: 12345
+        "401":
+          description: Datos obligatorios incompletos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Datos obligatorios incompletos
+        "500":
+          description: Internal Server Error
+  /pedidos/{order_id}:
+    parameters: 
+    - in: path  
+      name: order_id
+      description: Id del pedido a manupilar
+      required: true
+      schema:
+        type: integer
+        example: 175
+    get:
+      tags: 
+        - Pedidos
+      security: 
+        - bearerAuth: 
+          - read
+      summary: Listar un pedido
+      responses:
+        "200":
+          description: Detalle de un pedido
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    total:
+                      type: number
+                      example: 456.30
+                    status_id:
+                      type: integer
+                      example: 123
+                    user_id:
+                      type: integer
+                      example: 123
+                    detalle:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          product_id:
+                            type: integer
+                            example: 120
+                          quantity:
+                            type: integer
+                            example: 3
+                    pay_method_id:
+                      type: integer
+                      example: 123
+                    order_id:
+                      type: integer
+                      example: 170
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
+    patch:
+      tags: 
+        - Pedidos
+      security: 
+        - bearerAuth: 
+          - read
+      description: Modificar un pedido
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status_id:
+                  type: integer
+                  example: 123
+      responses:
+        "200":
+          description: Pedido modificado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Pedido modificado exitosamente
+        "400":
+          description: Bad request
+        "500":
+          description: Internal Server Error
+    delete:
+      tags: 
+        - Pedidos
+      security: 
+        - bearerAuth: 
+          - read
+      description: Anular un pedido
+      responses:
+        "200":
+          description: Pedido anulado exitosamente
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msj:
+                    type: string
+                    example: Pedido anulado exitosamente
+        "400":
+          description: Bad request
+        "500":
+          description: Internal Server Error
+components:
+  securitySchemes:
+    bearerAuth:            
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Dario-Arena/DelilahResto/1.0.0
